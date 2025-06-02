@@ -3,6 +3,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Post-it de Tarefas</title>
   <style>
     * {
@@ -135,6 +136,9 @@
       }
     }
   </style>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <h1>Post-it de Tarefas</h1>
@@ -147,54 +151,57 @@
   <div id="notesContainer"></div>
 
   <script>
-    const storageKey = "postits";
-
-    function saveNotes(notes) {
-      localStorage.setItem(storageKey, JSON.stringify(notes));
-    }
-
-    function loadNotes() {
-      return JSON.parse(localStorage.getItem(storageKey)) || [];
-    }
-
-    function renderNotes() {
-      const container = document.getElementById("notesContainer");
-      container.innerHTML = "";
-      const notes = loadNotes();
-
-      notes.forEach((note, index) => {
-        const noteDiv = document.createElement("div");
-        noteDiv.className = "note";
-
-        const days = calcDaysSince(note.createdAt);
-
-        const title = document.createElement("h3");
-        title.textContent = `${days} dia${days !== 1 ? 's' : ''}`;
-
-        const content = document.createElement("p");
-        content.textContent = note.text;
-
-        const btn = document.createElement("button");
-        btn.textContent = "Deletar";
-        btn.className = "delete-btn";
-        btn.onclick = () => {
-          notes.splice(index, 1);
-          saveNotes(notes);
-          renderNotes();
-        };
-
-        noteDiv.appendChild(title);
-        noteDiv.appendChild(content);
-        noteDiv.appendChild(btn);
-        container.appendChild(noteDiv);
-      });
-    }
+    // 🔧 Cole aqui sua configuração do Firebase
+    const firebaseConfig = {
+  apiKey: "AIzaSyCMvMLlcxThYIquvAXjsuKtvznQyeGo0d4",
+  authDomain: "postit-6b2f0.firebaseapp.com",
+  projectId: "postit-6b2f0",
+  storageBucket: "postit-6b2f0.firebasestorage.app",
+  messagingSenderId: "419645960721",
+  appId: "1:419645960721:web:e07c4d3a559e4b36d0b7b0"
+};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const collection = db.collection("postits");
 
     function calcDaysSince(dateStr) {
       const created = new Date(dateStr);
       const now = new Date();
       const diffTime = now - created;
       return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    function renderNotes() {
+      const container = document.getElementById("notesContainer");
+      container.innerHTML = "";
+
+      collection.orderBy("createdAt", "asc").get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const note = doc.data();
+          const noteDiv = document.createElement("div");
+          noteDiv.className = "note";
+
+          const days = calcDaysSince(note.createdAt);
+
+          const title = document.createElement("h3");
+          title.textContent = `${days} dia${days !== 1 ? 's' : ''}`;
+
+          const content = document.createElement("p");
+          content.textContent = note.text;
+
+          const btn = document.createElement("button");
+          btn.textContent = "Deletar";
+          btn.className = "delete-btn";
+          btn.onclick = () => {
+            collection.doc(doc.id).delete().then(renderNotes);
+          };
+
+          noteDiv.appendChild(title);
+          noteDiv.appendChild(content);
+          noteDiv.appendChild(btn);
+          container.appendChild(noteDiv);
+        });
+      });
     }
 
     function addNote() {
@@ -205,11 +212,13 @@
         return;
       }
 
-      const notes = loadNotes();
-      notes.push({ text, createdAt: new Date().toISOString() });
-      saveNotes(notes);
-      renderNotes();
-      input.value = "";
+      collection.add({
+        text,
+        createdAt: new Date().toISOString()
+      }).then(() => {
+        input.value = "";
+        renderNotes();
+      });
     }
 
     setInterval(renderNotes, 60000);
