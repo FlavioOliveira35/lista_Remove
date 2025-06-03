@@ -1,135 +1,173 @@
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Post-it App Moderno</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f2f2f2;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ece9e6, #ffffff);
+    }
+
+    header {
+      background-color: #420344;
+      color: rgb(196, 195, 138);
+      padding: 16px;
+      text-align: center;
+      font-size: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
     .navbar {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      background-color: #333;
+      overflow-x: auto;
+      background: #420344;
       padding: 10px;
+      gap: 8px;
+      justify-content: center;
+      scroll-snap-type: x mandatory;
     }
 
     .navbar button {
-      background-color: #444;
+      scroll-snap-align: start;
+      background: #e8c8f0;
       border: none;
-      color: white;
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 8px;
+      color: rgb(58, 6, 30);
+      padding:7px 10px 7px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.3s;
-      font-size: 0.9em;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+      white-space: nowrap;
     }
 
     .navbar button:hover {
-      background-color: #666;
+      color: rgb(233, 200, 216);
+      background: #560758;
+      transform: scale(1.05);
     }
 
     .container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 15px;
-      padding: 15px;
+      padding: 20px;
+      gap: 20px;
     }
 
     .postit {
-      background: #fff475;
+      background-color: #FFF59D;
       width: 220px;
-      min-height: 150px;
+      min-height: 140px;
       padding: 15px;
-      border-radius: 10px;
-      box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
-      position: relative;
+      border-radius: 12px;
+      box-shadow: 4px 6px 12px rgba(0,0,0,0.2);
       transform: rotate(-1deg);
-      transition: transform 0.2s;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      position: relative;
       word-wrap: break-word;
     }
 
     .postit:hover {
-      transform: scale(1.02);
+      transform: rotate(0deg) scale(1.03);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.3);
     }
 
-    .days {
-      font-size: 0.8rem;
-      color: #333;
-      margin-bottom: 8px;
+    .days {      
+      font-size: 1rem;
+      font-weight: bold;
+      color: #d33232;
+      margin-bottom: 6px;
     }
 
-    .actions {
+    .delete-btn {
       position: absolute;
-      top: 5px;
+      top: 8px;
       right: 10px;
-    }
-
-    .actions button {
-      background: none;
+      background: transparent;
       border: none;
       font-size: 1.2rem;
       cursor: pointer;
-      color: red;
+      color: #d63031;
     }
 
-    textarea {
-      width: 100%;
-      padding: 8px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-
-    .input-area {
-      padding: 15px;
+    .form {
       text-align: center;
+      padding: 20px;
     }
 
-    @media (max-width: 600px) {
-      .postit {
-        width: 90%;
-      }
-
-      .navbar {
-        flex-direction: column;
-        align-items: center;
-      }
+    .form textarea {
+      width: 90%;
+      max-width: 400px;
+      height: 80px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      resize: none;
+      font-size: 1rem;
+      margin-bottom: 10px;
     }
+
+    .form button {
+      padding: 10px 20px;
+      background: #4ad60a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .form button:hover {
+      background: #971818;
+    }
+
+    /* Cores por categoria */
+    .pessoal { background: #FFF59D; }
+    .trabalho { background: #A5D6A7; }
+    .investimentos { background: #81D4FA; }
+    .motivacionais { background: #FFD180; }
+    .gestao { background: #CE93D8; }
+    .mimos_esposa { background: #F48FB1; }
+    .mimos_filho { background: #FFE082; }
+    .mimos_flavio { background: #FFAB91; }
+    .mimos_casa { background: #BCAAA4; }
+    .sonhos { background: #B2EBF2; }
+    .reuniao { background: #E6EE9C; }
+    .diario { background: #B0BEC5; }
   </style>
 </head>
 <body>
-  <div class="navbar" id="nav">
+  <header>📝 Meu Mural de Post-its</header>
+
+  <div class="navbar" id="navbar">
     <button onclick="changeTab('pessoal')">👤 Pessoal</button>
     <button onclick="changeTab('trabalho')">💼 Trabalho</button>
     <button onclick="changeTab('investimentos')">💰 Investimentos</button>
-    <button onclick="changeTab('motivacionais')">💬 Motivacionais</button>
+    <button onclick="changeTab('motivacionais')">🌟 Motivacionais</button>
     <button onclick="changeTab('gestao')">📊 Gestão</button>
-    <button onclick="changeTab('mimos_esposa')">💖 Esposa</button>
+    <button onclick="changeTab('mimos_esposa')">💕 Esposa</button>
     <button onclick="changeTab('mimos_filho')">👶 Filho</button>
-    <button onclick="changeTab('mimos_flavio')">🧘 Flavio</button>
+    <button onclick="changeTab('mimos_flavio')">🎁 Flavio</button>
     <button onclick="changeTab('mimos_casa')">🏠 Casa</button>
     <button onclick="changeTab('sonhos')">🌈 Sonhos</button>
     <button onclick="changeTab('reuniao')">📅 Reunião</button>
-    <button onclick="changeTab('diario')">📓 Diário</button>
+    <button onclick="changeTab('diario')">📔 Diário</button>
+  </div>
+
+  <div class="form">
+    <textarea id="noteText" placeholder="Digite sua nota..."></textarea><br>
+    <button onclick="addNote()">Adicionar Post-it</button>
   </div>
 
   <div class="container" id="notes"></div>
-
-  <div class="input-area">
-    <textarea id="noteText" placeholder="Digite sua nota..."></textarea><br/>
-    <button onclick="addNote()">Adicionar Nota</button>
-  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
