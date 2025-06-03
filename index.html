@@ -2,228 +2,115 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post-it de Tarefas</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post-it App Moderno</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-      color: #333;
-      text-shadow: 1px 1px 2px #aaa;
-    }
-
-    #form {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 30px;
-    }
-
-    textarea {
-      width: 100%;
-      height: 100px;
-      font-size: 16px;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      resize: none;
-    }
-
-    button {
-      background: #00c853;
-      color: white;
-      font-weight: bold;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background: #009624;
-    }
-
-    #notesContainer {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-
-    .note {
-      background: #fff176;
-      padding: 20px;
-      width: 250px;
-      border-radius: 10px;
-      box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
-      position: relative;
-      animation: fadeIn 0.5s ease;
-      transition: transform 0.2s ease;
-    }
-
-    .note:hover {
-      transform: scale(1.03);
-    }
-
-    .note h3 {
-      margin-top: 0;
-      color: #d32f2f;
-      font-size: 20px;
-    }
-
-    .note p {
-      white-space: pre-wrap;
-      margin: 10px 0;
-    }
-
-    .delete-btn {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background: #ef5350;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.3s ease;
-    }
-
-    .delete-btn:hover {
-      background: #c62828;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .note {
-        width: 90%;
-      }
-
-      #form {
-        width: 90%;
-      }
-    }
+    /* Estilos aqui (resumidos para exemplo) */
+    body { font-family: sans-serif; background: #f0f0f0; }
+    .navbar { background: #333; color: #fff; display: flex; overflow-x: auto; padding: 10px; }
+    .navbar button { margin-right: 5px; background: #444; color: white; border: none; border-radius: 5px; padding: 8px; cursor: pointer; }
+    .container { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; }
+    .postit { background: yellow; padding: 10px; border-radius: 10px; width: 200px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); position: relative; }
+    .days { font-size: 0.8rem; color: #555; margin-bottom: 0.5rem; }
+    .actions { position: absolute; top: 5px; right: 5px; }
+    .actions button { background: none; border: none; color: red; font-size: 1rem; cursor: pointer; }
+    textarea { width: 100%; height: 80px; margin-top: 10px; }
   </style>
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <h1>Post-it de Tarefas</h1>
-
-  <div id="form">
-    <textarea id="taskInput" placeholder="Digite suas tarefas aqui..."></textarea>
-    <button onclick="addNote()">Adicionar Post-it</button>
+  <div class="navbar" id="nav">
+    <button onclick="changeTab('pessoal')">👤 Pessoal</button>
+    <button onclick="changeTab('trabalho')">💼 Trabalho</button>
+    <button onclick="changeTab('investimentos')">💰 Investimentos</button>
+    <button onclick="changeTab('motivacionais')">💬 Motivacionais</button>
+    <button onclick="changeTab('gestao')">📊 Gestão</button>
+    <button onclick="changeTab('mimos_esposa')">💖 Esposa</button>
+    <button onclick="changeTab('mimos_filho')">👶 Filho</button>
+    <button onclick="changeTab('mimos_flavio')">🧘 Flavio</button>
+    <button onclick="changeTab('mimos_casa')">🏠 Casa</button>
+    <button onclick="changeTab('sonhos')">🌈 Sonhos</button>
+    <button onclick="changeTab('reuniao')">📅 Reunião</button>
+    <button onclick="changeTab('diario')">📓 Diário</button>
   </div>
 
-  <div id="notesContainer"></div>
+  <div class="container" id="notes"></div>
 
-  <script>
-    // 🔧 Cole aqui sua configuração do Firebase
+  <div style="padding: 10px;">
+    <textarea id="noteText" placeholder="Digite sua nota..."></textarea><br/>
+    <input type="file" id="imageInput" /><br/>
+    <button onclick="addNote()">Adicionar Nota</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp, query, where
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
     const firebaseConfig = {
-  apiKey: "AIzaSyCMvMLlcxThYIquvAXjsuKtvznQyeGo0d4",
+      apiKey: "AIzaSyCMvMLlcxThYIquvAXjsuKtvznQyeGo0d4",
   authDomain: "postit-6b2f0.firebaseapp.com",
   projectId: "postit-6b2f0",
   storageBucket: "postit-6b2f0.firebasestorage.app",
   messagingSenderId: "419645960721",
   appId: "1:419645960721:web:e07c4d3a559e4b36d0b7b0"
-};
+    };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const collection = db.collection("postits");
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let currentTab = 'pessoal';
 
-    function calcDaysSince(dateStr) {
-      const created = new Date(dateStr);
-      const now = new Date();
-      const diffTime = now - created;
-      return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    function changeTab(tab) {
+      currentTab = tab;
+      loadNotes();
     }
 
-    function renderNotes() {
-      const container = document.getElementById("notesContainer");
-      container.innerHTML = "";
-
-      collection.orderBy("createdAt", "asc").get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const note = doc.data();
-          const noteDiv = document.createElement("div");
-          noteDiv.className = "note";
-
-          const days = calcDaysSince(note.createdAt);
-
-          const title = document.createElement("h3");
-          title.textContent = `${days} dia${days !== 1 ? 's' : ''}`;
-
-          const content = document.createElement("p");
-          content.textContent = note.text;
-
-          const btn = document.createElement("button");
-          btn.textContent = "Deletar";
-          btn.className = "delete-btn";
-          btn.onclick = () => {
-            collection.doc(doc.id).delete().then(renderNotes);
-          };
-
-          noteDiv.appendChild(title);
-          noteDiv.appendChild(content);
-          noteDiv.appendChild(btn);
-          container.appendChild(noteDiv);
-        });
+    async function loadNotes() {
+      const container = document.getElementById('notes');
+      container.innerHTML = '';
+      const q = query(collection(db, 'postits'), where("category", "==", currentTab));
+      const snapshot = await getDocs(q);
+      snapshot.forEach(docSnap => {
+        const note = docSnap.data();
+        const postit = document.createElement('div');
+        postit.className = 'postit';
+        const createdAt = note.createdAt?.toDate?.() ?? new Date();
+        const daysDiff = Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24));
+        postit.innerHTML = `
+          <div class="days">${daysDiff} dias pendente</div>
+          <div>${note.text}</div>
+          ${note.imageURL ? `<img src="${note.imageURL}" style="width:100%;" onclick="window.open('${note.imageURL}','_blank')"/>` : ""}
+          <div class="actions"><button onclick="deleteNote('${docSnap.id}')">🗑️</button></div>
+        `;
+        container.appendChild(postit);
       });
     }
 
-    function addNote() {
-      const input = document.getElementById("taskInput");
-      const text = input.value.trim();
-      if (!text) {
-        alert("Digite alguma tarefa.");
-        return;
+    async function addNote() {
+      const text = document.getElementById('noteText').value;
+      const imageInput = document.getElementById('imageInput');
+      let imageURL = '';
+      if (imageInput.files[0]) {
+        alert("Upload de imagem só funciona com Firebase Storage configurado.");
       }
-
-      collection.add({
+      await addDoc(collection(db, 'postits'), {
         text,
-        createdAt: new Date().toISOString()
-      }).then(() => {
-        input.value = "";
-        renderNotes();
+        category: currentTab,
+        createdAt: serverTimestamp(),
+        imageURL
       });
+      document.getElementById('noteText').value = '';
+      imageInput.value = '';
+      loadNotes();
     }
 
-    setInterval(renderNotes, 60000);
-    renderNotes();
+    async function deleteNote(id) {
+      await deleteDoc(doc(db, 'postits', id));
+      loadNotes();
+    }
+
+    loadNotes();
   </script>
 </body>
 </html>
