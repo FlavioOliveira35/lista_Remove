@@ -16,6 +16,12 @@
     }
 
     header {
+      
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;      
       background-color: #420344;
       color: rgb(196, 195, 138);
       padding: 16px;
@@ -24,16 +30,24 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
-    .navbar {
+    .navbar {    
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      margin-top: 63px;
       display: flex;
       overflow-x: auto;
       background: #420344;
-      padding: 0px 0px 10px 0px;
+      padding: 20px 20px 10px 40px;
       gap: 5px;  
       scroll-padding-left: 10px;
       scroll-snap-type: x mandatory;      
       justify-content: flex-start;
     }
+
+    
 
     .navbar button {
       display: flex;
@@ -56,7 +70,8 @@
       transform: scale(1.05);
     }
 
-    .container {
+    .container {     
+      margin-top: 5px;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -65,16 +80,21 @@
     }
 
     .postit {
+      font-size: 10pt;
+      display: flex; 
+      flex-wrap: wrap;      
+      flex-direction: column;
+      justify-content: space-between;
       background-color: #FFF59D;
-      width: 200px;
-      min-height: 140px;
+      width: 230px;
+      min-height: 130px;
+      max-width: 230px;      
       padding: 15px;
       border-radius: 12px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       transform: rotate(-1deg);
       transition: transform 0.2s ease, box-shadow 0.3s ease;
-      position: relative;
-      word-wrap: break-word;
+      
       
     }
 
@@ -83,20 +103,30 @@
       box-shadow: 0 30px 80px rgba(0,0,0,0.3);
     }
 
-    .days {      
+    .days { 
+      position: absolute;
+      top:80%;            
+      width: 80%;      
       font-size: 1rem;
       font-weight: bold;
       color: #d33232;
       margin-bottom: 6px;
+      text-align: center;
+      padding-bottom: 5px;
+      
     }
 
-    .delete-btn {      
-      position: absolute;      
+    
+
+    
+    .delete-btn  {
+     
+      position: absolute;
+      top:5px;
+      left: 200px;    
+      padding-bottom: 5px;
       background: transparent;
-      border: none;
-      font-size: 1rem;
       cursor: pointer;
-      color: #d63031;
     }
 
     .form {
@@ -105,7 +135,8 @@
     }
 
     .form textarea {
-      width: 90%;
+      margin-top: 130px;
+      width: 80%;
       max-width: 400px;
       height: 80px;
       padding: 10px;
@@ -116,9 +147,11 @@
       margin-bottom: 10px;
     }
 
+    
+
     .form button {
       padding: 10px 20px;
-      background: #4ad60a;
+      background: #4b054b;
       color: white;
       border: none;
       border-radius: 8px;
@@ -129,6 +162,11 @@
 
     .form button:hover {
       background: #971818;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
     }
 
     /* Cores por categoria */
@@ -223,11 +261,11 @@
         postit.className = 'postit';
         const createdAt = note.createdAt?.toDate?.() ?? new Date();
         const daysDiff = Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24));
-        postit.innerHTML = `
-          <div class="days">${daysDiff} dias pendente</div>
+        postit.innerHTML = `               
           <div>${note.text}</div>
-          <div class="actions"><button onclick="deleteNote('${docSnap.id}')">🗑️</button></div>
-        `;
+                <div class="days">${daysDiff} dias pendente</div>  
+          <div class="delete-btn"><button onclick="deleteNote('${docSnap.id}')">&#10060</button></div>         
+           `;
         container.appendChild(postit);
       });
     }
