@@ -28,19 +28,22 @@
       display: flex;
       overflow-x: auto;
       background: #420344;
-      padding: 10px;
-      gap: 8px;
+      padding: 0px 0px 10px 0px;
+      gap: 5px;  
+      scroll-padding-left: 10px;
+      scroll-snap-type: x mandatory;      
       justify-content: center;
-      scroll-snap-type: x mandatory;
     }
 
     .navbar button {
-      scroll-snap-align: start;
+      display: flex;
+      scroll-snap-align:center ;
       background: #e8c8f0;
       border: none;
       color: rgb(58, 6, 30);
       padding:7px 10px 7px 10px;
-      border-radius: 6px;
+      border-radius: 6px;      
+      min-width: max-content;
       cursor: pointer;
       transition: all 0.3s;
       font-size: 0.9rem;
@@ -92,7 +95,7 @@
       right: 10px;
       background: transparent;
       border: none;
-      font-size: 1.2rem;
+      font-size: 1rem;
       cursor: pointer;
       color: #d63031;
     }
