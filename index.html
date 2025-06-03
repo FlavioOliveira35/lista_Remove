@@ -32,7 +32,7 @@
       gap: 5px;  
       scroll-padding-left: 10px;
       scroll-snap-type: x mandatory;      
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     .navbar button {
@@ -66,15 +66,16 @@
 
     .postit {
       background-color: #FFF59D;
-      width: 220px;
+      width: 200px;
       min-height: 140px;
       padding: 15px;
       border-radius: 12px;
-      box-shadow: 4px 6px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       transform: rotate(-1deg);
       transition: transform 0.2s ease, box-shadow 0.3s ease;
       position: relative;
       word-wrap: break-word;
+      
     }
 
     .postit:hover {
@@ -89,10 +90,8 @@
       margin-bottom: 6px;
     }
 
-    .delete-btn {
-      position: absolute;
-      top: 8px;
-      right: 10px;
+    .delete-btn {      
+      position: absolute;      
       background: transparent;
       border: none;
       font-size: 1rem;
