@@ -8,28 +8,55 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
-    
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       background: #f3f3f3;
     }
     .screen {
-      margin-top: 130px; display: none; padding: 20px; }
+      margin-top: 150px;
+      display: none;
+      padding: 15px;
+     }
+
     .active {
-       display: block; }
-    input, textarea, button {
+       display: block; 
+      }
+
+    input {
   
       display: block;
       margin: 10px auto;
       padding: 10px;
       border-radius: 5px;
       width: 90%;
-      max-width: 400px;
+      max-width: 300px;
       font-size: 1rem;
     }
-    button { cursor: pointer; background: #4CAF50; color: white; border: none; }
-    button:hover { background: #388E3C; }
+
+    textarea {
+  
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 5px;
+  width: 90%;
+  max-width: 300px;
+  font-size: 1rem;
+}
+
+ button {
+  
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 5px;
+  width: 90%;
+  max-width: 300px;
+  font-size: 1rem;
+}
+   
     header {
       
       position: fixed;
@@ -48,58 +75,78 @@
   button {
     
       position: relative;
-      background: #e8c8f0; color: #3a061e; border: none; border-radius: 6px;
-      padding: 7px 12px; white-space: nowrap; min-width: max-content;
+      background: #e8c8f0; 
+      color: #3a061e;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 12px;
+      white-space: nowrap;
+      min-width: max-content;
     }
-    button .badge {
-      
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: red;
-      color: white;
-      font-size: 0.75rem;
-      padding: 2px 6px;
-      border-radius: 50%;
+  
+    button:hover { /* seleção dos temas */
+      background: #560758; 
+      color: #e9c8d8;
+      cursor: pointer; }
+
+    .container { 
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      gap: 15px; 
+      padding: 20px;
+     }
+
+    .postit {      
+      background: #FFF59D;
+      padding: 15px;
+      border-radius: 10px;
+      width: 200px;
+      min-height: 140px;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
+      transform: rotate(-1deg); 
+      position: relative;
+      cursor: pointer;
     }
-    button:hover { background: #560758; color: #e9c8d8; }
-    .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; }
-    .postit {
-      
-      background: #FFF59D; padding: 15px; border-radius: 10px; width: 200px; min-height: 140px;
-      box-shadow: 2px 4px 10px rgba(0,0,0,0.2); transform: rotate(-1deg); position: relative;
+    .postit .days { 
+      font-weight: bold;
+       color: #d33232; 
+       margin-bottom: 5px;
+       }
+
+    .postit button { /*lixeira */
+      margin-top: 100px;
+      position: absolute; top: 8px; right: 10px;
+      background: none;
+      border: none;
+      color: #d63031; font-size: 1rem; 
+      cursor: pointer;
     }
-    .postit .days { font-weight: bold; color: #d33232; margin-bottom: 5px; }
-    .postit button {
-      margin-top: 130px;
-      position: absolute; top: 8px; right: 10px; background: none; border: none;
-      color: #d63031; font-size: 1rem; cursor: pointer;
-    }
+
     .navbar {    
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       z-index: 1000;
-      margin-top: 63px;
+      margin-top: 55px;
       display: flex;
       overflow-x: auto;
       background: #420344;
-      padding: 20px 20px 10px 40px;
+      padding: 20px 20px 10px 20px;
       gap: 5px;  
-      scroll-padding-left: 10px;
+      scroll-padding-left: 2px;
       scroll-snap-type: x mandatory;      
       justify-content: flex-start;
+      
     }  
      
 
-  .badge {
-    
+  .badge {  /*contador */   
     position: absolute;
     top: -5px;
     right: -5px;
-    background: red;
-    
+    background: rgb(14, 189, 43);    
     color: white;
     font-size: 0.7rem;
     width: 18px;
