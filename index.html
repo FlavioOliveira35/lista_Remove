@@ -3,18 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Post-it App Moderno</title>
+  <title>Post-it com Login e Contadores</title>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
-    * { box-sizing: border-box; }
+    
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #ece9e6, #ffffff);
+      margin: 0;
+      background: #f3f3f3;
     }
-
+    .screen {
+      margin-top: 130px; display: none; padding: 20px; }
+    .active {
+       display: block; }
+    input, textarea, button {
+  
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 5px;
+      width: 90%;
+      max-width: 400px;
+      font-size: 1rem;
+    }
+    button { cursor: pointer; background: #4CAF50; color: white; border: none; }
+    button:hover { background: #388E3C; }
     header {
       
       position: fixed;
@@ -29,7 +44,37 @@
       font-size: 1.5rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
-
+    
+  button {
+    
+      position: relative;
+      background: #e8c8f0; color: #3a061e; border: none; border-radius: 6px;
+      padding: 7px 12px; white-space: nowrap; min-width: max-content;
+    }
+    button .badge {
+      
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: red;
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 50%;
+    }
+    button:hover { background: #560758; color: #e9c8d8; }
+    .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; }
+    .postit {
+      
+      background: #FFF59D; padding: 15px; border-radius: 10px; width: 200px; min-height: 140px;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.2); transform: rotate(-1deg); position: relative;
+    }
+    .postit .days { font-weight: bold; color: #d33232; margin-bottom: 5px; }
+    .postit button {
+      margin-top: 130px;
+      position: absolute; top: 8px; right: 10px; background: none; border: none;
+      color: #d63031; font-size: 1rem; cursor: pointer;
+    }
     .navbar {    
       position: fixed;
       top: 0;
@@ -45,177 +90,62 @@
       scroll-padding-left: 10px;
       scroll-snap-type: x mandatory;      
       justify-content: flex-start;
-    }
-
-    
-
-    .navbar button {
-      display: flex;
-      scroll-snap-align:center ;
-      background: #e8c8f0;
-      border: none;
-      color: rgb(58, 6, 30);
-      padding:7px 10px 7px 10px;
-      border-radius: 6px;      
-      min-width: max-content;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.9rem;
-      white-space: nowrap;
-    }
-
-    .navbar button:hover {
-      color: rgb(233, 200, 216);
-      background: #560758;
-      transform: scale(1.05);
-    }
-
-    .container {     
-      margin-top: 5px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
-      gap: 20px;
-    }
-
-    .postit {
-      font-size: 10pt;
-      display: flex; 
-      flex-wrap: wrap;      
-      flex-direction: column;
-      justify-content: space-between;
-      background-color: #FFF59D;
-      width: 230px;
-      min-height: 130px;
-      max-width: 230px;      
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      transform: rotate(-1deg);
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
-      
-      
-    }
-
-    .postit:hover {
-      transform: rotate(0deg) scale(1.03);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.3);
-    }
-
-    .days { 
-      position: absolute;
-      top:80%;            
-      width: 80%;      
-      font-size: 1rem;
-      font-weight: bold;
-      color: #d33232;
-      margin-bottom: 6px;
-      text-align: center;
-      padding-bottom: 5px;
-      
-    }
-
-    
-
-    
-    .delete-btn  {
+    }  
      
-      position: absolute;
-      top:5px;
-      left: 200px;    
-      padding-bottom: 5px;
-      background: transparent;
-      cursor: pointer;
-    }
 
-    .form {
-      text-align: center;
-      padding: 20px;
-    }
-
-    .form textarea {
-      margin-top: 130px;
-      width: 80%;
-      max-width: 400px;
-      height: 80px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      resize: none;
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-
+  .badge {
     
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    
+    color: white;
+    font-size: 0.7rem;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    border-radius: 50%;
+    display: none;
+  }
+</style>
 
-    .form button {
-      padding: 10px 20px;
-      background: #4b054b;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .form button:hover {
-      background: #971818;
-    }
-
-    button {
-      background-color: transparent;
-      border: none;
-    }
-
-    /* Cores por categoria */
-    .pessoal { background: #FFF59D; }
-    .trabalho { background: #A5D6A7; }
-    .investimentos { background: #81D4FA; }
-    .motivacionais { background: #FFD180; }
-    .gestao { background: #CE93D8; }
-    .mimos_esposa { background: #F48FB1; }
-    .mimos_filho { background: #FFE082; }
-    .mimos_flavio { background: #FFAB91; }
-    .mimos_casa { background: #BCAAA4; }
-    .sonhos { background: #B2EBF2; }
-    .reuniao { background: #E6EE9C; }
-    .diario { background: #B0BEC5; }
-  </style>
+</style>
 </head>
 <body>
-  <header>📝 Meu Mural de Post-its</header>
-
-  <div class="navbar" id="navbar">
-    <button onclick="changeTab('pessoal')">👤 Pessoal</button>
-    <button onclick="changeTab('trabalho')">💼 Trabalho</button>
-    <button onclick="changeTab('investimentos')">💰 Investimentos</button>
-    <button onclick="changeTab('motivacionais')">🌟 Motivacionais</button>
-    <button onclick="changeTab('gestao')">📊 Gestão</button>
-    <button onclick="changeTab('mimos_esposa')">💕 Esposa</button>
-    <button onclick="changeTab('mimos_filho')">👶 Filho</button>
-    <button onclick="changeTab('mimos_flavio')">🎁 Flavio</button>
-    <button onclick="changeTab('mimos_casa')">🏠 Casa</button>
-    <button onclick="changeTab('sonhos')">🌈 Sonhos</button>
-    <button onclick="changeTab('reuniao')">📅 Reunião</button>
-    <button onclick="changeTab('diario')">📔 Diário</button>
+  <div id="loginScreen" class="screen active">
+    <h2>Entrar</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+    <p style="text-align:center;"><a href="#" onclick="showScreen('registerScreen')">Criar conta</a></p>
   </div>
 
-  <div class="form">
-    <textarea id="noteText" placeholder="Digite sua nota..."></textarea><br>
-    <button onclick="addNote()">Adicionar Post-it</button>
+  <div id="registerScreen" class="screen">
+    <h2>Criar Conta</h2>
+    <input type="email" id="registerEmail" placeholder="Email">
+    <input type="password" id="registerPassword" placeholder="Senha">
+    <button onclick="register()">Cadastrar</button>
+    <p style="text-align:center;"><a href="#" onclick="showScreen('loginScreen')">Voltar</a></p>
   </div>
 
-  <div class="container" id="notes"></div>
+  <div id="appScreen" class="screen">
+    <header>📝 Meu Mural de Post-its</header>
+    <div class="navbar" id="navbar"></div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp, query, where
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    <div class="form">
+      <textarea id="noteText" placeholder="Digite sua nota..."></textarea>
+      <button onclick="addNote()">Adicionar Post-it</button>
+      <button onclick="logout()" style="background:#c0392b;">Sair</button>
+    </div>
 
-    const firebaseConfig = {
+    <div class="container" id="notes"></div>
+  </div>
+
+  <script>
+    
+      const firebaseConfig = {
   apiKey: "AIzaSyCMvMLlcxThYIquvAXjsuKtvznQyeGo0d4",
   authDomain: "postit-6b2f0.firebaseapp.com",
   projectId: "postit-6b2f0",
@@ -223,54 +153,142 @@
   messagingSenderId: "419645960721",
   appId: "1:419645960721:web:e07c4d3a559e4b36d0b7b0"
 };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    let currentTab = 'pessoal';
+    let currentUser = null;
+    let currentTab = "pessoal";
 
-    window.changeTab = function(tab) {
+    const categorias = [
+      ["pessoal", "👤 Pessoal"],
+      ["trabalho", "💼 Trabalho"],
+      ["investimentos", "💰 Investimentos"],
+      ["motivacionais", "🌟 Motivacionais"],
+      ["gestao", "📊 Gestão"],
+      ["mimos_esposa", "💕 Esposa"],
+      ["mimos_filho", "👶 Filho"],
+      ["mimos_flavio", "🎁 Flavio"],
+      ["mimos_casa", "🏠 Casa"],
+      ["sonhos", "🌈 Sonhos"],
+      ["reuniao", "📅 Reunião"],
+      ["diario", "📔 Diário"]
+    ];
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        showScreen("appScreen");
+        buildNavbar();
+        loadNotes();
+      } else {
+        showScreen("loginScreen");
+      }
+    });
+
+    function login() {
+      const email = document.getElementById("loginEmail").value;
+      const pass = document.getElementById("loginPassword").value;
+      auth.signInWithEmailAndPassword(email, pass).catch(e => alert("Erro: " + e.message));
+    }
+
+    function register() {
+      const email = document.getElementById("registerEmail").value;
+      const pass = document.getElementById("registerPassword").value;
+      auth.createUserWithEmailAndPassword(email, pass).catch(e => alert("Erro: " + e.message));
+    }
+
+    function logout() {
+      auth.signOut();
+    }
+
+    function buildNavbar() {
+      const navbar = document.getElementById("navbar");
+      navbar.innerHTML = "";
+      categorias.forEach(([id, label]) => {
+        const btn = document.createElement("button");
+        btn.id = "btn_" + id;
+        btn.innerHTML = `${label}<span class="badge" id="badge_${id}">0</span>`;
+        btn.onclick = () => { changeTab(id); };
+        navbar.appendChild(btn);
+        updateBadgeCount(id);
+      });
+    }
+
+    function updateBadgeCount(cat) {
+  db.collection("postits")
+    .where("uid", "==", currentUser.uid)
+    .where("category", "==", cat)
+    .get()
+    .then(snap => {
+      const badge = document.getElementById("badge_" + cat);
+      if (badge) {
+        if (snap.size > 0) {
+          badge.textContent = snap.size;
+          badge.style.display = "inline-block";
+        } else {
+          badge.style.display = "none";
+        }
+      }
+    });
+}
+
+    function changeTab(tab) {
       currentTab = tab;
       loadNotes();
     }
 
-    window.addNote = async function() {
-      const text = document.getElementById('noteText').value;
-      if (!text.trim()) return;
-      await addDoc(collection(db, 'postits'), {
+    function addNote() {
+      const text = document.getElementById("noteText").value.trim();
+      if (!text || !currentUser) return;
+      db.collection("postits").add({
         text,
         category: currentTab,
-        createdAt: serverTimestamp()
-      });
-      document.getElementById('noteText').value = '';
-      loadNotes();
-    }
-
-    window.deleteNote = async function(id) {
-      await deleteDoc(doc(db, 'postits', id));
-      loadNotes();
-    }
-
-    async function loadNotes() {
-      const container = document.getElementById('notes');
-      container.innerHTML = '';
-      const q = query(collection(db, 'postits'), where("category", "==", currentTab));
-      const snapshot = await getDocs(q);
-      snapshot.forEach(docSnap => {
-        const note = docSnap.data();
-        const postit = document.createElement('div');
-        postit.className = 'postit';
-        const createdAt = note.createdAt?.toDate?.() ?? new Date();
-        const daysDiff = Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24));
-        postit.innerHTML = `               
-          <div>${note.text}</div>
-                <div class="days">${daysDiff} dias pendente</div>  
-          <div class="delete-btn"><button onclick="deleteNote('${docSnap.id}')">&#10060</button></div>         
-           `;
-        container.appendChild(postit);
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        uid: currentUser.uid
+      }).then(() => {
+        document.getElementById("noteText").value = "";
+        buildNavbar();
+        loadNotes();
       });
     }
 
-    loadNotes();
+    function deleteNote(id) {
+      db.collection("postits").doc(id).delete().then(() => {
+        buildNavbar();
+        loadNotes();
+      });
+    }
+
+    function loadNotes() {
+      const container = document.getElementById("notes");
+      container.innerHTML = "";
+      db.collection("postits")
+        .where("category", "==", currentTab)
+        .where("uid", "==", currentUser.uid)
+        .orderBy("createdAt", "desc")
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            const note = doc.data();
+            const div = document.createElement("div");
+            div.className = `postit ${note.category}`;
+            const created = note.createdAt?.toDate() ?? new Date();
+            const days = Math.floor((Date.now() - created.getTime()) / (1000*60*60*24));
+            div.innerHTML = `
+              <div class="days">${days} dia(s) pendente</div>
+              <div>${note.text}</div>
+              <button onclick="deleteNote('${doc.id}')">🗑️</button>
+            `;
+            container.appendChild(div);
+          });
+        });
+    }
   </script>
 </body>
 </html>
